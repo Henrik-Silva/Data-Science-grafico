@@ -1,0 +1,57 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+
+url = "https://raw.githubusercontent.com/wcota/covid19br/master/cases-brazil-cities.csv"
+
+dados = pd.read_csv(url)
+
+dados.dropna(inplace=True)
+
+cidade_mais_casos = dados.loc[dados["totalCases"].idxmax(), ["city", "totalCases"]]
+
+cidade_menos_casos = dados.loc[dados["totalCases"].idxmin(), ["city", "totalCases"]]
+
+estado_mais_casos = dados.groupby("state")["totalCases"].sum().idxmax()
+casos_estado_mais = dados.groupby("state")["totalCases"].sum().max()
+
+estado_menos_casos = dados.groupby("state")["totalCases"].sum().idxmin()
+casos_estado_menos = dados.groupby("state")["totalCases"].sum().min()
+
+cidade_mais_mortes = dados.loc[dados["deaths"].idxmax(), ["city", "deaths"]]
+
+cidade_menos_mortes = dados.loc[dados["deaths"].idxmin(), ["city", "deaths"]]
+
+estado_mais_mortes = dados.groupby("state")["deaths"].sum().idxmax()
+mortes_estado_mais = dados.groupby("state")["deaths"].sum().max()
+
+estado_menos_mortes = dados.groupby("state")["deaths"].sum().idxmin()
+mortes_estado_menos = dados.groupby("state")["deaths"].sum().min()
+
+total_casos_brasil = dados["totalCases"].sum()
+
+total_mortes_brasil = dados["deaths"].sum()
+
+estados_top5_mortes = dados.groupby("state")["deaths"].sum().sort_values(ascending=False).head(5)
+estados_top5_mortes.plot(kind="bar", color="red")
+plt.title("Top 5 Estados com Mais Mortes")
+plt.ylabel("Número de Mortes")
+plt.xlabel("Estado")
+plt.show()
+
+estados_bottom5_mortes = dados.groupby("state")["deaths"].sum().sort_values(ascending=True).head(5)
+estados_bottom5_mortes.plot(kind="bar", color="green")
+plt.title("Top 5 Estados com Menos Mortes")
+plt.ylabel("Número de Mortes")
+plt.xlabel("Estado")
+plt.show()
+
+print("1. Cidade com mais casos de COVID:", cidade_mais_casos.to_dict())
+print("2. Cidade com menos casos de COVID:", cidade_menos_casos.to_dict())
+print("3. Estado com mais casos de COVID:", estado_mais_casos, "-", casos_estado_mais, "casos")
+print("4. Estado com menos casos de COVID:", estado_menos_casos, "-", casos_estado_menos, "casos")
+print("5. Cidade com mais mortes:", cidade_mais_mortes.to_dict())
+print("6. Cidade com menos mortes:", cidade_menos_mortes.to_dict())
+print("7. Estado com mais mortes:", estado_mais_mortes, "-", mortes_estado_mais, "mortes")
+print("8. Estado com menos mortes:", estado_menos_mortes, "-", mortes_estado_menos, "mortes")
+print("9. Total de casos de COVID no Brasil:", total_casos_brasil)
+print("10. Total de mortes no Brasil:", total_mortes_brasil)
